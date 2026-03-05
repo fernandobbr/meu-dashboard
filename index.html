@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📈 Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     TELA DE UPLOAD
+══════════════════════════════════════════ -->
+<div id="uploadScreen">
+  <div class="upload-box">
+    <span style="font-size:48px;display:block;margin-bottom:20px;">📊</span>
+    <h2>Dashboard Produção - V4.1</h2>
+    <p>Selecione o arquivo Excel exportado do Protheus.<br>Os dados preenchem o dashboard automaticamente.</p>
+    <label class="upload-lbl" for="fileInput">▲ SELECIONAR ARQUIVO EXCEL</label>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+    <div class="upload-hint">Formatos aceitos: .xlsx · .xls · .csv</div>
+    <div id="errMsg"></div>
+    <div class="col-list">
+      <p>Colunas esperadas:</p>
+      <div class="col-tags">
+        <span class="col-tag">FILIAL</span>
+        <span class="col-tag">OP_PAI</span>
+        <span class="col-tag">COD_PRODUTO_PAI</span>
+        <span class="col-tag">DESC_PRODUTO_PAI</span>
+        <span class="col-tag">PESO_PAI</span>
+        <span class="col-tag">SITUACAO_PAI</span>
+        <span class="col-tag">PREPARACAO</span>
+        <span class="col-tag">SEMANA</span>
+        <span class="col-tag">RECURSO</span>
+        <span class="col-tag">OP_FILHO</span>
+        <span class="col-tag">COD_PRODUTO_FILHO</span>
+        <span class="col-tag">DESC_PRODUTO_FILHO</span>
+        <span class="col-tag">PESO_FILHO</span>
+        <span class="col-tag">SITUACAO_FILHO</span>
+        <span class="col-tag">ANALISE</span>
+        <span class="col-tag">PERC_ENCERRADO</span>
+        <span class="col-tag">USO_PAI</span>
+        <span class="col-tag">RECURSO_PENDENTE</span>
+      </div>
+    </div>
+
+    <!-- ASSINATURA -->
+    <div class="dev-signature">
+      <div class="sig-line"></div>
+      <div class="sig-content">
+        <span class="sig-label">Desenvolvido por</span>
+        <span class="sig-name">Fernando Moraes</span>
+        <span class="sig-dot">·</span>
+        <span class="sig-year">2026</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DASHBOARD PRINCIPAL
+══════════════════════════════════════════ -->
+<div id="dashboard">
+  <div class="dash-frame">
+    <div class="dash-frame-tr"></div>
+    <div class="dash-frame-bl"></div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-l">
+        <h1 id="dashTitle" style="font-size:20px;font-weight:700;letter-spacing:2px;">
+          <span style="color:var(--cyan)">F1</span>
+          <span style="color:var(--muted);margin:0 8px">◈</span>
+          <span style="color:var(--text)">DASHBOARD</span>
+          </h1>
+      </div>
+      <div class="topbar-r">
+        <div class="file-info" id="fileInfo">—</div>
+        <button class="reload-btn" id="reloadBtn">↺ TROCAR ARQUIVO</button>
+      </div>
+    </div>
+
+    <!-- AVISO DE ATUALIZAÇÃO -->
+     <div class="update-notice">
+      <div class="un-tl"></div>
+      <div class="un-br"></div>
+      <span class="update-icon">⏱</span>
+      <span class="update-text">Planilhas atualizadas diariamente às <strong>08:00</strong>, <strong>13:00</strong> e <strong>15:45</strong></span>
+     </div>
+
+    <!-- FILTROS -->
+    <div class="filters">
+      <span class="fl" style="color:#ffffff">Filtros:</span>
+
+      <div class="ms-wrap" id="wrap-fSemana">
+        <div class="ms-btn" id="btn-fSemana" onclick="toggleMs('fSemana')">
+          <span class="ms-label" id="lbl-fSemana">Semana: todas</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fSemana">
+          <input class="ms-search" placeholder="Buscar..." oninput="filterMsItems('fSemana',this.value)">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fSemana')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fSemana')">Limpar</button>
+          </div>
+          <div id="items-fSemana"></div>
+        </div>
+      </div>
+
+      <div class="ms-wrap" id="wrap-fSitPai">
+        <div class="ms-btn" id="btn-fSitPai" onclick="toggleMs('fSitPai')">
+          <span class="ms-label" id="lbl-fSitPai">Sit. Pai: todas</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fSitPai">
+          <input class="ms-search" placeholder="Buscar..." oninput="filterMsItems('fSitPai',this.value)">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fSitPai')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fSitPai')">Limpar</button>
+          </div>
+          <div id="items-fSitPai"></div>
+        </div>
+      </div>
+
+      <div class="ms-wrap" id="wrap-fSitFilho">
+        <div class="ms-btn" id="btn-fSitFilho" onclick="toggleMs('fSitFilho')">
+          <span class="ms-label" id="lbl-fSitFilho">Sit. Filho: todas</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fSitFilho">
+          <input class="ms-search" placeholder="Buscar..." oninput="filterMsItems('fSitFilho',this.value)">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fSitFilho')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fSitFilho')">Limpar</button>
+          </div>
+          <div id="items-fSitFilho"></div>
+        </div>
+      </div>
+
+      <div class="ms-wrap" id="wrap-fAnalise">
+        <div class="ms-btn" id="btn-fAnalise" onclick="toggleMs('fAnalise')">
+          <span class="ms-label" id="lbl-fAnalise">Análise: todas</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fAnalise">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fAnalise')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fAnalise')">Limpar</button>
+          </div>
+          <div id="items-fAnalise"></div>
+        </div>
+      </div>
+
+      <div class="ms-wrap" id="wrap-fPendente">
+        <div class="ms-btn" id="btn-fPendente" onclick="toggleMs('fPendente')">
+          <span class="ms-label" id="lbl-fPendente">Pendente: todos</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fPendente">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fPendente')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fPendente')">Limpar</button>
+          </div>
+          <div id="items-fPendente"></div>
+        </div>
+      </div>
+
+      <div class="ms-wrap" id="wrap-fRecursoPend">
+        <div class="ms-btn" id="btn-fRecursoPend" onclick="toggleMs('fRecursoPend')">
+          <span class="ms-label" id="lbl-fRecursoPend">Recurso Pend.: todos</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fRecursoPend">
+          <input class="ms-search" placeholder="Buscar..." oninput="filterMsItems('fRecursoPend',this.value)">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fRecursoPend')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fRecursoPend')">Limpar</button>
+          </div>
+          <div id="items-fRecursoPend"></div>
+        </div>
+      </div>
+
+      <div class="ms-wrap" id="wrap-fUso">
+        <div class="ms-btn" id="btn-fUso" onclick="toggleMs('fUso')">
+          <span class="ms-label" id="lbl-fUso">Uso: todos</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fUso">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fUso')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fUso')">Limpar</button>
+          </div>
+          <div id="items-fUso"></div>
+        </div>
+      </div>
+
+      <!-- NOVO FILTRO: PREPARAÇÃO -->
+      <div class="ms-wrap" id="wrap-fPreparacao">
+        <div class="ms-btn" id="btn-fPreparacao" onclick="toggleMs('fPreparacao')">
+          <span class="ms-label" id="lbl-fPreparacao">Preparação: todas</span>
+          <span class="ms-arrow">▼</span>
+        </div>
+        <div class="ms-dropdown" id="drop-fPreparacao">
+          <div class="ms-actions">
+            <button class="ms-act-btn" onclick="selectAllMs('fPreparacao')">Todos</button>
+            <button class="ms-act-btn" onclick="clearMs('fPreparacao')">Limpar</button>
+          </div>
+          <div id="items-fPreparacao"></div>
+        </div>
+      </div>
+
+      <input class="search-input" id="searchInput" placeholder="Buscar OP, produto...">
+
+      <!-- ← BOTÃO LIMPAR TODOS OS FILTROS -->
+      <button class="clear-btn" onclick="clearAllFilters()">✕ Limpar Filtros</button>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)" id="rowCount"></span>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi" style="--kc:var(--cyan); cursor:pointer" onclick="openModalOPsPai()">
+        <div class="kpi-lbl">OPs Pai</div>
+        <div class="kpi-val" id="kOPsPai">—</div>
+        <div class="kpi-sub" id="kSub">—</div>
+      </div>
+      <div class="kpi" style="--kc:var(--yellow)">
+        <div class="kpi-lbl">Total Filhos</div>
+        <div class="kpi-val" id="kFilhos">—</div>
+        <div class="kpi-sub">OPs FILHAS ÚNICAS</div>
+      </div>
+      <div class="kpi" style="--kc:var(--green)">
+        <div class="kpi-lbl">Peso Total Pai</div>
+        <div class="kpi-val sm" id="kPesoPai">—</div>
+        <div class="kpi-sub">SOMA POR OP ÚNICA</div>
+      </div>
+      <div class="kpi" style="--kc:var(--orange);cursor:pointer" onclick="openModalPesoFilho()">
+        <div class="kpi-lbl">Peso Total Filhos</div>
+        <div class="kpi-val sm" id="kPesoFilho">—</div>
+        <div class="kpi-sub">SOMA DE PESO FILHO EM ABERTO</div>
+      </div>
+      <div class="kpi" style="--kc:var(--red)">
+        <div class="kpi-lbl">Filhos c/ Pendência</div>
+        <div class="kpi-val" id="kPendentes">—</div>
+        <div class="kpi-sub">RECURSO PENDENTE ≠ VAZIO</div>
+      </div>
+    </div>
+
+    <!-- TABELA PRINCIPAL -->
+    <div class="main" id="mainGrid">
+      <div class="panel">
+        <div class="ph">
+          <div class="pt">Hierarquia PAI → FILHO</div>
+          <div class="tbl-hint"><span>◈</span> clique duas vezes para abrir detalhes da OP</div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr id="tblHead"></tr></thead>
+            <tbody id="mainBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span id="pagInfo">—</span>
+          <div class="pag-btns" id="pagBtns"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRÁFICOS INFERIORES -->
+    <div class="bottom">
+      <div class="panel">
+        <div class="ph">
+          <div class="pt">Peso por Recurso Pendente</div>
+          <span class="peso-src-badge" id="pesoBadge">⚖ Soma de Peso Filho</span>
+        </div>
+        <div style="padding:12px 16px" id="recursosBars"><div class="no-data">—</div></div>
+      </div>
+      <div class="panel">
+        <div class="ph">
+          <div class="pt">Peso por Grupo × Uso</div>
+          <div style="display:flex;gap:4px;align-items:center">
+            <button class="grp-toggle active" id="grpAll"  onclick="setGrpFiltro('todos')">Todos</button>
+            <button class="grp-toggle"        id="grpExp"  onclick="setGrpFiltro('Expedido')">Expedido</button>
+            <button class="grp-toggle"        id="grpCons" onclick="setGrpFiltro('Consumido')">Consumido</button>
+          </div>
+        </div>
+        <div style="padding:12px 16px" id="sitBars"><div class="no-data">—</div></div>
+      </div>
+    </div>
+
+  </div><!-- /dash-frame -->
+</div><!-- /dashboard -->
+
+<!-- ══════════════════════════════════════════
+     MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="modalTitle">—</div>
+        <div class="modal-sub"   id="modalSub">—</div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn" id="modalExpand">⛶ EXPANDIR</button>
+        <button class="modal-btn close-btn" id="modalClose">✕ FECHAR</button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <table class="modal-tbl" id="modalTable">
+        <thead id="modalThead"></thead>
+        <tbody id="modalBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-info" id="modalFooter">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MODAL DE NOVIDADES
+══════════════════════════════════════════ -->
+<div class="changelog-overlay" id="changelogOverlay">
+  <div class="changelog-modal">
+    <div class="clog-tr"></div>
+    <div class="clog-bl"></div>
+
+    <div class="clog-head">
+      <div class="clog-head-l">
+        <div class="clog-version">V4.1</div>
+        <div>
+          <div class="clog-title">Novidades desta versão</div>
+          <div class="clog-date">Atualizado em março · 2026</div>
+        </div>
+      </div>
+      <button class="clog-close" onclick="closeChangelog()">✕ FECHAR</button>
+    </div>
+
+    <div class="clog-body">
+
+      <div class="clog-section">
+        <div class="clog-section-title">Melhorias</div>
+        <div class="clog-item">
+          <div class="clog-dot" style="background:var(--green)"></div>
+          <div class="clog-text">Coluna <strong>Preparação</strong> adicionada — exibe o status de liberação pelo entreposto diretamente na tabela principal. <span class="clog-tag tag-new">NOVO</span></div>
+        </div>
+        <div class="clog-item">
+          <div class="clog-dot" style="background:var(--green)"></div>
+          <div class="clog-text">Novo <strong>filtro Preparação</strong> disponível na barra de filtros com as opções: Liberada, Em Andamento e Não Iniciada. <span class="clog-tag tag-new">NOVO</span></div>
+        </div>
+      </div>
+
+      <div class="clog-section">
+        <div class="clog-section-title">Regras de negócio</div>
+        <div class="clog-item">
+          <div class="clog-dot" style="background:var(--cyan)"></div>
+          <div class="clog-text"><strong>OPs de Montagem</strong> — consideradas apenas OPs com uso <strong>Expedido</strong>. <span class="clog-tag tag-info">INFO</span></div>
+        </div>
+        <div class="clog-item">
+          <div class="clog-dot" style="background:var(--yellow)"></div>
+          <div class="clog-text"><strong>OPs de Solda</strong> — consideradas OPs que passam pelo entreposto de solda (<strong>Expedido / Consumido</strong>). Robô de Solda não está sendo considerado nesta versão. <span class="clog-tag tag-wip">EM ANDAMENTO</span></div>
+        </div>
+      </div>
+
+      <div class="clog-notice">
+        <span>⚠</span>
+        <span>Caso identifique inconsistências nos dados, entre em contato com o responsável pelo dashboard.</span>
+      </div>
+
+    </div>
+
+    <div class="clog-footer">
+      <span class="clog-footer-info">Dashboard Produção · Fernando Moraes · 2026</span>
+      <button class="clog-confirm" onclick="closeChangelog()">ENTENDIDO ✓</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
