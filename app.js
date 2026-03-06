@@ -473,7 +473,11 @@ function renderPag(pages, total, start) {
     b.className = 'pag-btn' + (active ? ' active' : '');
     b.textContent = lbl;
     b.disabled = disabled;
-    b.onclick = function () { curPage = pg; renderTable(); document.querySelector('.tbl-wrap').scrollTop = 0; };
+    b.onclick - function () {
+       curPage = pg;
+       renderTable();
+       document.querySelector('#mainGrid .tbl-wrap').scroolTop = 0;
+    };
     btns.appendChild(b);
   }
 
