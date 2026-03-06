@@ -476,7 +476,7 @@ function renderPag(pages, total, start) {
     b.onclick = function () {
        curPage = pg;
        renderTable();
-       document.querySelector('.tb-wrap').scrollTop = 0;
+       document.querySelector('.tbl-wrap').scrollTop = 0;
     };
     btns.appendChild(b);
   }
